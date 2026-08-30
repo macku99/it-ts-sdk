@@ -26,6 +26,10 @@ export function getAdapter(name: HarnessName): HarnessAdapter {
 }
 
 export { runHarness } from "./run.js";
+// The same conversion the adapters apply before handing a schema to a CLI.
+// Exported because a caller that builds a schema needs to see what the harness
+// will actually send.
+export { toHarnessJsonSchema } from "./schema.js";
 export { preflightModels } from "./preflight.js";
 export { resolveEffort } from "./effort.js";
 export { modelFor, type ModelClass } from "./models.js";

@@ -26,7 +26,10 @@ export function withNodeMiddleware<S extends TracedState>(
   fn: GraphNode<S>,
   deps: NodeMiddlewareDeps = {},
 ): GraphNode<S> {
-  const log = deps.log ?? ((line: string) => console.log(`[graph] ${line}`));
+  // stderr, not stdout: a worm whose stdout carries a protocol has nowhere to
+  // put a progress line, and one of these landing between two JSON objects
+  // breaks whatever is parsing them.
+  const log = deps.log ?? ((line: string) => console.error(`[graph] ${line}`));
 
   return async (state: S) => {
     const started = Date.now();

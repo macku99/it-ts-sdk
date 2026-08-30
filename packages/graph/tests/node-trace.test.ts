@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 import { required, withNodeMiddleware } from "../src/index.js";
 import type { NodeFailure, TracedState } from "../src/index.js";
@@ -157,5 +157,33 @@ describe("progress reaches the log as it happens", () => {
     const update = await node({ trace: [] });
 
     expect(lines[0]).toBe(update.trace?.[0]);
+  });
+});
+
+// A worm whose stdout carries a machine-readable protocol has nowhere to put a
+// progress line: one console.log from the middleware lands between two JSON
+// objects and the consumer parsing them fails. Diagnostics go to stderr, which
+// is what stderr is for, and a caller wanting them elsewhere injects a log.
+describe("where the default log writes", () => {
+  it("writes progress to stderr, leaving stdout to the caller", async () => {
+    const out: string[] = [];
+    const err: string[] = [];
+    const outSpy = vi.spyOn(console, "log").mockImplementation((line: string) => {
+      out.push(line);
+    });
+    const errSpy = vi.spyOn(console, "error").mockImplementation((line: string) => {
+      err.push(line);
+    });
+
+    try {
+      await withNodeMiddleware("classify", async () => ({}))({ trace: [] });
+    } finally {
+      outSpy.mockRestore();
+      errSpy.mockRestore();
+    }
+
+    expect(out).toEqual([]);
+    expect(err).toHaveLength(1);
+    expect(err[0]).toMatch(/^\[graph\] classify/);
   });
 });
