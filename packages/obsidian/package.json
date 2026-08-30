@@ -1,0 +1,24 @@
+{
+  "name": "@it-core/obsidian",
+  "version": "0.1.0",
+  "description": "Obsidian vault-path resolution, read from the editor's own registry file",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --root ../.. packages/obsidian"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

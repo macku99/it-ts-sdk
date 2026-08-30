@@ -1,0 +1,23 @@
+{
+  "name": "it-core-ts-sdk",
+  "version": "0.1.0",
+  "description": "Shared TypeScript infrastructure for worm projects — headless agent-CLI harness, Obsidian vault resolution, graph-node middleware",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@it-core/harness",
+  "version": "0.1.0",
+  "description": "Headless agent-CLI runner — spawns claude/codex/grok and validates their output against a schema",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --root ../.. packages/harness"
+  },
+  "dependencies": {
+    "zod": "^4.4.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
