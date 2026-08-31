@@ -1,5 +1,5 @@
 {
-  "name": "@it-core/harness",
+  "name": "@it/harness",
   "version": "0.1.0",
   "description": "Headless agent-CLI runner — spawns claude/codex/grok and validates their output against a schema",
   "type": "module",

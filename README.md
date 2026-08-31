@@ -1,13 +1,13 @@
-# it-core-ts-sdk
+# it-ts-sdk
 
 Shared TypeScript infrastructure for worm projects, as an npm workspace of
 independently versioned packages.
 
 | Package | What it holds |
 |---|---|
-| `@it-core/harness` | Headless agent-CLI runner — spawns `claude`/`codex`/`grok` detached, validates their output against a zod schema, retries transient failures, checks pinned models against an allowlist |
-| `@it-core/obsidian` | Vault-path resolution, read from Obsidian's own registry file, platform-aware across macOS and Linux |
-| `@it-core/graph` | Graph-node middleware — execution tracing and the `required` state-channel guard |
+| `@it/harness` | Headless agent-CLI runner — spawns `claude`/`codex`/`grok` detached, validates their output against a zod schema, retries transient failures, checks pinned models against an allowlist |
+| `@it/obsidian` | Vault-path resolution, read from Obsidian's own registry file, platform-aware across macOS and Linux |
+| `@it/graph` | Graph-node middleware — execution tracing and the `required` state-channel guard |
 
 ## Working in the repo
 
@@ -25,7 +25,7 @@ path:
 
 ```json
 "dependencies": {
-  "@it-core/harness": "file:../../it-core-ts-sdk/packages/harness"
+  "@it/harness": "file:../../it-ts-sdk/packages/harness"
 }
 ```
 

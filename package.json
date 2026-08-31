@@ -1,5 +1,5 @@
 {
-  "name": "it-core-ts-sdk",
+  "name": "it-ts-sdk",
   "version": "0.1.0",
   "description": "Shared TypeScript infrastructure for worm projects — headless agent-CLI harness, Obsidian vault resolution, graph-node middleware",
   "private": true,

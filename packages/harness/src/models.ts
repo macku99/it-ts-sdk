@@ -86,7 +86,7 @@ export function checkModel(
 
   return (
     `'${model}' is not a known ${harness} model. Known: ${known.join(", ")}. `
-    + `If it is newer than @it-core/harness's src/models.ts, add it there, `
+    + `If it is newer than @it/harness's src/models.ts, add it there, `
     + `or set ${SKIP_CHECK_ENV}=1 for this run.`
   );
 }

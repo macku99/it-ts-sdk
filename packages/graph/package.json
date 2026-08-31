@@ -1,5 +1,5 @@
 {
-  "name": "@it-core/graph",
+  "name": "@it/graph",
   "version": "0.1.0",
   "description": "Shared graph-node middleware — execution tracing and state-channel guards",
   "type": "module",

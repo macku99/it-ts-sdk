@@ -1,5 +1,5 @@
 {
-  "name": "@it-core/obsidian",
+  "name": "@it/obsidian",
   "version": "0.1.0",
   "description": "Obsidian vault-path resolution, read from the editor's own registry file",
   "type": "module",
