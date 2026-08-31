@@ -36,6 +36,9 @@ jobs:
       # Trusted publishing needs npm 11.5.1+. pnpm publish still asks the npm
       # CLI to do the upload, so the version on the runner is the one that has
       # to be new enough, whichever package manager drives the install.
+      #
+      # It is also what generates provenance, which npm allows only from a
+      # public source repository — this one was private until it was not.
       - run: npm install -g npm@latest
 
       - run: pnpm install --frozen-lockfile
@@ -70,7 +73,11 @@ jobs:
               echo "→ publishing ${name}@${version}"
               # --no-git-checks because the checkout is a detached head, which
               # pnpm otherwise refuses to publish from.
-              pnpm publish --filter "${name}" --access public --no-git-checks
+              # --provenance signs an attestation linking the tarball to this
+              # commit and this workflow run, which npm shows on the package
+              # page. It requires a public source repository and would fail
+              # rather than degrade if this one went private again.
+              pnpm publish --filter "${name}" --access public --provenance --no-git-checks
               published=$((published + 1))
             fi
           done
