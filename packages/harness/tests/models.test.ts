@@ -23,7 +23,7 @@ describe("checkModel", () => {
   });
 
   it("points at the file to edit when a model is newer than the list", () => {
-    expect(checkModel("grok", "grok-9", {})).toMatch(/@it\/harness's src\/models\.ts/);
+    expect(checkModel("grok", "grok-9", {})).toMatch(/@itfrombit\/harness's src\/models\.ts/);
   });
 
   it("keeps harnesses separate, since a name valid for one is not for another", () => {

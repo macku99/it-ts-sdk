@@ -1,7 +1,13 @@
 {
-  "name": "@it/graph",
+  "name": "@itfrombit/graph",
   "version": "0.1.0",
-  "description": "Shared graph-node middleware — execution tracing and state-channel guards",
+  "description": "Shared graph-node middleware \u2014 execution tracing and state-channel guards",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macku99/it-ts-sdk.git",
+    "directory": "packages/graph"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,10 +21,14 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
     "test": "vitest run --root ../.. packages/graph"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,7 +1,13 @@
 {
-  "name": "@it/obsidian",
+  "name": "@itfrombit/obsidian",
   "version": "0.1.0",
   "description": "Obsidian vault-path resolution, read from the editor's own registry file",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macku99/it-ts-sdk.git",
+    "directory": "packages/obsidian"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,10 +21,14 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
     "test": "vitest run --root ../.. packages/obsidian"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

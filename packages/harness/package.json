@@ -1,7 +1,13 @@
 {
-  "name": "@it/harness",
+  "name": "@itfrombit/harness",
   "version": "0.1.0",
-  "description": "Headless agent-CLI runner — spawns claude/codex/grok and validates their output against a schema",
+  "description": "Headless agent-CLI runner \u2014 spawns claude/codex/grok and validates their output against a schema",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macku99/it-ts-sdk.git",
+    "directory": "packages/harness"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +21,7 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
     "test": "vitest run --root ../.. packages/harness"
   },
@@ -23,5 +30,8 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
