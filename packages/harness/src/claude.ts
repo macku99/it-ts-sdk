@@ -33,7 +33,9 @@ function resultEnvelope(stdout: string): Record<string, unknown> | undefined {
   } catch {
     // JSONL: the run's summary is the last result event, and everything before
     // it is init and per-turn chatter.
-    return streamedLines(text).toReversed().find((line) => line.type === "result");
+    return streamedLines(text)
+      .toReversed()
+      .find((line) => line.type === "result");
   }
 }
 
@@ -41,6 +43,15 @@ function resultEnvelope(stdout: string): Record<string, unknown> | undefined {
 // that died mid-stream be reported as such, instead of as malformed JSON.
 function isStreamed(stdout: string): boolean {
   return streamedLines(stdout).some((line) => typeof line.type === "string");
+}
+
+// An error envelope carries `result` as text for a plain refusal and as a
+// structured object for a rate or turn limit. Stringifying the object form
+// gives "[object Object]", hiding the reason the run failed.
+function describeResult(result: unknown): string {
+  if (typeof result === "string") return result;
+  if (result === undefined || result === null) return "unknown";
+  return JSON.stringify(result);
 }
 
 // Claude Code answers on stdout as a result envelope whose `result` field holds
@@ -58,8 +69,16 @@ export const claudeAdapter: HarnessAdapter = {
     const streaming = images.length > 0;
 
     const args = streaming
-      ? ["-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose",
-         "--json-schema", schemaJson]
+      ? [
+          "-p",
+          "--input-format",
+          "stream-json",
+          "--output-format",
+          "stream-json",
+          "--verbose",
+          "--json-schema",
+          schemaJson,
+        ]
       : ["-p", request.prompt, "--output-format", "json", "--json-schema", schemaJson];
 
     if (request.systemPrompt) args.push("--append-system-prompt", request.systemPrompt);
@@ -179,7 +198,7 @@ export const claudeAdapter: HarnessAdapter = {
     // envelope. Report that text rather than letting it fail schema validation
     // as unparseable JSON.
     if (envelope.is_error === true) {
-      throw new Error(`claude reported an error: ${String(envelope.result ?? "unknown")}`);
+      throw new Error(`claude reported an error: ${describeResult(envelope.result)}`);
     }
 
     const { result } = envelope;

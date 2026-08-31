@@ -93,10 +93,17 @@ describe("claude adapter", () => {
       schemaJson,
       scratch,
     );
-    const allowed = rw.args.slice(rw.args.indexOf("--allowedTools") + 1, rw.args.indexOf("--dangerously-skip-permissions"));
+    const allowed = rw.args.slice(
+      rw.args.indexOf("--allowedTools") + 1,
+      rw.args.indexOf("--dangerously-skip-permissions"),
+    );
     expect(allowed).toEqual(expect.arrayContaining(["Read", "Edit", "Bash", "mcp__serena__*"]));
 
-    const none = claudeAdapter.buildInvocation(request({ access: "read-only" }), schemaJson, scratch);
+    const none = claudeAdapter.buildInvocation(
+      request({ access: "read-only" }),
+      schemaJson,
+      scratch,
+    );
     expect(none.args).not.toContain("--allowedTools");
   });
 
@@ -118,6 +125,17 @@ describe("claude adapter", () => {
     const stdout = JSON.stringify({ is_error: true, result: "rate limited" });
     await expect(claudeAdapter.extractPayload(proc({ stdout }), noFile)).rejects.toThrow(
       /rate limited/,
+    );
+  });
+
+  it("renders a structured harness error rather than describing the object", async () => {
+    const stdout = JSON.stringify({
+      is_error: true,
+      result: { type: "rate_limit", retry_after: 30 },
+    });
+
+    await expect(claudeAdapter.extractPayload(proc({ stdout }), noFile)).rejects.toThrow(
+      /rate_limit/,
     );
   });
 
@@ -174,7 +192,8 @@ describe("claude adapter", () => {
   });
 
   it("finds the result line despite a trailing newline", async () => {
-    const stdout = `${JSON.stringify({ type: "system" })}\n`
+    const stdout =
+      `${JSON.stringify({ type: "system" })}\n`
       + `${JSON.stringify({ type: "result", result: '{"verdict":"ok"}' })}\n`;
     await expect(claudeAdapter.extractPayload(proc({ stdout }), noFile)).resolves.toEqual({
       verdict: "ok",
@@ -328,7 +347,11 @@ describe("codex adapter", () => {
   });
 
   it("assumes the narrowest ladder when the call names no model at all", () => {
-    const { args } = codexAdapter.buildInvocation(request({ effort: "ultra" }), schemaJson, scratch);
+    const { args } = codexAdapter.buildInvocation(
+      request({ effort: "ultra" }),
+      schemaJson,
+      scratch,
+    );
     expect(args[args.indexOf("-c") + 1]).toBe("model_reasoning_effort=xhigh");
   });
 });
@@ -397,15 +420,22 @@ describe("grok adapter", () => {
 
   // Reading is how the frames arrive, so it must survive the read-only denylist.
   it("keeps the read tools available on a read-only step", () => {
-    const { args } = grokAdapter.buildInvocation(request({ access: "read-only" }), schemaJson, scratch);
+    const { args } = grokAdapter.buildInvocation(
+      request({ access: "read-only" }),
+      schemaJson,
+      scratch,
+    );
     expect(args[args.indexOf("--disallowed-tools") + 1]).not.toMatch(/\bRead\b/);
   });
 
   it("names the effort level in grok's own flag", () => {
-    const { args } = grokAdapter.buildInvocation(request({ effort: "medium" }), schemaJson, scratch);
+    const { args } = grokAdapter.buildInvocation(
+      request({ effort: "medium" }),
+      schemaJson,
+      scratch,
+    );
     expect(args[args.indexOf("--reasoning-effort") + 1]).toBe("medium");
   });
-
 });
 
 describe("registry", () => {
