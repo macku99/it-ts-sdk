@@ -1,0 +1,25 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run typecheck
+
+      # Built last and on purpose: `files` publishes dist/, so a build that
+      # fails here is a package that would publish empty.
+      - run: npm run build

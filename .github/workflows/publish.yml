@@ -1,0 +1,70 @@
+name: publish
+
+# The three packages version independently, which is the point of the
+# workspace — so there is no single repo-wide version to tag. Instead a push
+# that changes a package publishes whichever versions the registry does not
+# have yet, and skips the rest. Bumping a version in package.json and merging
+# is the whole release process.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Mints the OIDC token npm exchanges for publish rights. Without it the
+      # publish falls back to looking for a credential and finds none.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      # Trusted publishing needs npm 11.5.1+, and Node 22 still ships npm 10.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      # Tested here rather than trusting another workflow's green tick: a
+      # published version cannot be taken back, so the gate has to be inside
+      # the job that does the publishing.
+      - run: npm test
+
+      - run: npm run typecheck
+
+      - run: npm run build
+
+      - name: Publish the versions the registry does not have
+        run: |
+          set -euo pipefail
+          published=0
+
+          for dir in packages/*/; do
+            name=$(node -p "require('./${dir}package.json').name")
+            version=$(node -p "require('./${dir}package.json').version")
+
+            # `npm view` exits non-zero on a version that does not exist, which
+            # is what makes this idempotent: a push that bumped one package
+            # leaves the other two alone instead of failing the whole run on
+            # "cannot publish over the previously published version".
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "· ${name}@${version} is already published"
+            else
+              echo "→ publishing ${name}@${version}"
+              npm publish -w "${name}" --access public
+              published=$((published + 1))
+            fi
+          done
+
+          echo "published ${published} package(s)"
