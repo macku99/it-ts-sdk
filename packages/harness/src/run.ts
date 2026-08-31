@@ -42,10 +42,7 @@ function mediaTypeOf(path: string): string {
 // Bytes are read only for the harnesses that carry them. codex takes the path
 // and opens the file itself, so encoding dozens of frames for it would be
 // megabytes of pointless work.
-async function encodeImages(
-  paths: string[],
-  encoding: ImageEncoding,
-): Promise<EncodedImage[]> {
+async function encodeImages(paths: string[], encoding: ImageEncoding): Promise<EncodedImage[]> {
   return Promise.all(
     paths.map(async (path) => ({
       path,
@@ -85,9 +82,10 @@ export const spawnHarness: Spawner = (bin, args, opts) =>
     // leaves those holding the stdout pipe.
     // Spelled as two literal tuples rather than one computed array so the
     // typings still promise stdout and stderr are readable streams.
-    const child = opts.stdin === undefined
-      ? spawn(bin, args, { cwd: opts.cwd, stdio: ["ignore", "pipe", "pipe"], detached: true })
-      : spawn(bin, args, { cwd: opts.cwd, stdio: ["pipe", "pipe", "pipe"], detached: true });
+    const child =
+      opts.stdin === undefined
+        ? spawn(bin, args, { cwd: opts.cwd, stdio: ["ignore", "pipe", "pipe"], detached: true })
+        : spawn(bin, args, { cwd: opts.cwd, stdio: ["pipe", "pipe", "pipe"], detached: true });
 
     if (opts.stdin !== undefined) {
       // These CLIs wait for EOF before starting, so the pipe must be closed and
@@ -102,7 +100,7 @@ export const spawnHarness: Spawner = (bin, args, opts) =>
     let stderr = "";
     let timedOut = false;
     let settled = false;
-    let drainTimer: NodeJS.Timeout | undefined;
+    let drainTimer: ReturnType<typeof setTimeout> | undefined;
 
     const finish = (fn: () => void): void => {
       if (settled) return;
@@ -225,10 +223,10 @@ export async function runHarness<T>(
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
       const retryable =
-        request.retry !== false &&
-        !(err instanceof PayloadError) &&
-        attempt < MAX_ATTEMPTS &&
-        classifyHarnessFailure(reason) === "transient";
+        request.retry !== false
+        && !(err instanceof PayloadError)
+        && attempt < MAX_ATTEMPTS
+        && classifyHarnessFailure(reason) === "transient";
       if (!retryable) throw err;
 
       const backoff = BACKOFF_MS[attempt - 1] ?? BACKOFF_MS[BACKOFF_MS.length - 1];
@@ -264,12 +262,7 @@ async function attemptHarness<T>(
       ? await encodeImages(request.imagePaths, adapter.imageEncoding)
       : undefined;
 
-    const { bin, args, stdin } = adapter.buildInvocation(
-      request as HarnessRequest<unknown>,
-      schemaJson,
-      scratch,
-      images,
-    );
+    const { bin, args, stdin } = adapter.buildInvocation(request, schemaJson, scratch, images);
 
     const proc = await spawner(bin, args, {
       cwd: request.cwd,
