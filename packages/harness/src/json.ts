@@ -11,6 +11,6 @@ export function parseJsonLoose(text: string, context: string): unknown {
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
     const preview = unfenced.slice(0, 200);
-    throw new Error(`${context}: response was not JSON (${reason}): ${preview}`);
+    throw new Error(`${context}: response was not JSON (${reason}): ${preview}`, { cause: err });
   }
 }

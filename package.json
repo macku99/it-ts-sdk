@@ -1,19 +1,19 @@
 {
   "name": "it-ts-sdk",
   "version": "0.1.0",
-  "description": "Shared TypeScript infrastructure for worm projects — headless agent-CLI harness, Obsidian vault resolution, graph-node middleware",
+  "description": "Shared TypeScript infrastructure for worm projects \u2014 headless agent-CLI harness, Obsidian vault resolution, graph-node middleware",
   "private": true,
+  "packageManager": "pnpm@11.24.0",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "pnpm -r run build",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "oxlint": "^1.80.0",
     "typescript": "^5.7.0",
     "vitest": "^3.1.0"
   },

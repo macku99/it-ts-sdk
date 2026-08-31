@@ -25,25 +25,31 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-          cache: npm
+          cache: pnpm
 
-      # Trusted publishing needs npm 11.5.1+, and Node 22 still ships npm 10.
+      # Trusted publishing needs npm 11.5.1+. pnpm publish still asks the npm
+      # CLI to do the upload, so the version on the runner is the one that has
+      # to be new enough, whichever package manager drives the install.
       - run: npm install -g npm@latest
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      # Tested here rather than trusting another workflow's green tick: a
+      # Checked here rather than trusting another workflow's green tick: a
       # published version cannot be taken back, so the gate has to be inside
       # the job that does the publishing.
-      - run: npm test
+      - run: pnpm run lint
 
-      - run: npm run typecheck
+      - run: pnpm run typecheck
 
-      - run: npm run build
+      - run: pnpm test
+
+      - run: pnpm run build
 
       - name: Publish the versions the registry does not have
         run: |
@@ -62,7 +68,9 @@ jobs:
               echo "· ${name}@${version} is already published"
             else
               echo "→ publishing ${name}@${version}"
-              npm publish -w "${name}" --access public
+              # --no-git-checks because the checkout is a detached head, which
+              # pnpm otherwise refuses to publish from.
+              pnpm publish --filter "${name}" --access public --no-git-checks
               published=$((published + 1))
             fi
           done

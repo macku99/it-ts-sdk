@@ -3,7 +3,11 @@
     "target": "ES2022",
     "module": "Node16",
     "moduleResolution": "Node16",
-    "lib": ["ES2022"],
+    // ES2023 for the non-mutating array methods — toSorted and toReversed,
+    // which Node 20 ships and which say at the call site that the input is left
+    // alone. target stays ES2022: these are methods, not syntax, so there is
+    // nothing to downlevel.
+    "lib": ["ES2023"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

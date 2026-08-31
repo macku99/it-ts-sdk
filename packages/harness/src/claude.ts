@@ -33,7 +33,7 @@ function resultEnvelope(stdout: string): Record<string, unknown> | undefined {
   } catch {
     // JSONL: the run's summary is the last result event, and everything before
     // it is init and per-turn chatter.
-    return streamedLines(text).reverse().find((line) => line.type === "result");
+    return streamedLines(text).toReversed().find((line) => line.type === "result");
   }
 }
 

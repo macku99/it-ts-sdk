@@ -1,0 +1,11 @@
+# The three packages. pnpm reads this rather than the `workspaces` field an npm
+# workspace uses, so that field is gone from package.json.
+packages:
+  - 'packages/*'
+
+# pnpm refuses to run a dependency's install scripts unless it is named here —
+# an unreviewed postinstall is how a compromised package gets code execution.
+# esbuild is vitest's bundler and fetches its platform binary that way, so it is
+# the one exception. `pnpm approve-builds` maintains this list.
+allowBuilds:
+  esbuild: true

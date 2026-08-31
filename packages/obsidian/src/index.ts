@@ -55,7 +55,7 @@ async function readRegistry(configPath: string): Promise<ObsidianConfig> {
     content = await readFile(configPath, "utf-8");
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === "ENOENT") {
-      throw new Error(missingRegistryMessage(configPath));
+      throw new Error(missingRegistryMessage(configPath), { cause: err });
     }
     throw err;
   }
@@ -109,7 +109,7 @@ export async function listVaults(
     })),
   );
 
-  return vaults.sort((a, b) => a.name.localeCompare(b.name));
+  return vaults.toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
 export function buildNotePath(

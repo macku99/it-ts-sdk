@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "npm run build",
+    "prepare": "tsc",
     "build": "tsc",
     "test": "vitest run --root ../.. packages/obsidian"
   },

@@ -3,23 +3,29 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
 
+      # Reads the version from package.json's packageManager field, so the
+      # runner and every checkout agree without it being written twice.
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      - run: npm test
+      - run: pnpm run lint
 
-      - run: npm run typecheck
+      - run: pnpm run typecheck
 
-      # Built last and on purpose: `files` publishes dist/, so a build that
-      # fails here is a package that would publish empty.
-      - run: npm run build
+      - run: pnpm test
+
+      # Last on purpose: `files` publishes dist/, so a build that fails here is
+      # a package that would publish empty.
+      - run: pnpm run build

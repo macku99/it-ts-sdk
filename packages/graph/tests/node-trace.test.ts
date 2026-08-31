@@ -30,7 +30,7 @@ describe("withNodeMiddleware", () => {
     const node = withNodeMiddleware<ProbeState>("classify", async () => ({
       trace: ["matched=true → systems"],
     }));
-    expect(update(await node(emptyState))).toMatch(/^classify \(\d+\.\ds\): matched=true → systems$/);
+    expect(firstTraceLine(await node(emptyState))).toMatch(/^classify \(\d+\.\ds\): matched=true → systems$/);
   });
 
   // Recorded rather than thrown, so the graph can still reach its reporting
@@ -63,7 +63,7 @@ describe("withNodeMiddleware", () => {
     expect(update.trace?.[0]).toMatch(/^write_note \(\d+\.\ds\): FAILED — harness timed out$/);
   });
 
-  function update(u: { trace?: string[] }): string {
+  function firstTraceLine(u: { trace?: string[] }): string {
     return u.trace?.[0] ?? "";
   }
 });

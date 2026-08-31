@@ -289,6 +289,7 @@ async function attemptHarness<T>(
       throw new Error(
         `${harness} produced no usable result (exit ${proc.code}): ${reason}`
           + (tail ? `\nstderr: ${tail}` : ""),
+        { cause: err },
       );
     }
 
