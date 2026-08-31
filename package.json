@@ -1,7 +1,6 @@
 {
   "name": "it-ts-sdk",
   "version": "0.1.0",
-  "description": "Shared TypeScript infrastructure for worm projects \u2014 headless agent-CLI harness, Obsidian vault resolution, graph-node middleware",
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "type": "module",
