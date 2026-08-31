@@ -15,5 +15,5 @@ export function required<T, K extends keyof T>(
   if (value === undefined || value === null) {
     throw new Error(`${nodeName} ran before '${String(key)}' was available`);
   }
-  return value as NonNullable<T[K]>;
+  return value;
 }

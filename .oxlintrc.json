@@ -12,8 +12,23 @@
   "rules": {
     "unicorn/consistent-function-scoping": "off",
     "unicorn/no-array-sort": "off",
-    "unicorn/no-array-reverse": "off"
+    "unicorn/no-array-reverse": "off",
+    // Narrowing an unknown catch binding or a parsed envelope with `as` is the
+    // idiom these packages use wherever they cross a process or JSON boundary,
+    // and the rule fires on every one. The assertions it flagged that were
+    // genuinely removable are gone; what is left is deliberate.
+    "typescript/no-unsafe-type-assertion": "off"
   },
+  "overrides": [
+    {
+      // An adapter that cannot resume a session simply has no extractSession,
+      // and asserting that reads as an unbound method reference to the rule.
+      "files": ["**/tests/**"],
+      "rules": {
+        "typescript/unbound-method": "off"
+      }
+    }
+  ],
   "ignorePatterns": [
     "**/dist/**",
     "**/node_modules/**"

@@ -40,7 +40,7 @@ export function withNodeMiddleware<S extends TracedState>(
       const detail = update.trace?.join("; ");
       const line = `${name} (${elapsed()}s)${detail ? `: ${detail}` : ""}`;
       log(line);
-      return { ...update, trace: [line] } as Partial<S>;
+      return { ...update, trace: [line] };
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
       const line = `${name} (${elapsed()}s): FAILED — ${reason}`;

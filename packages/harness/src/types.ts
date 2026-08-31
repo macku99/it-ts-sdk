@@ -90,10 +90,7 @@ export type ImageEncoding = "path" | "base64";
 
 // Running one step on one harness. Named so callers can take it as a
 // dependency and be driven by a fake, rather than reaching for the module.
-export type HarnessRunner = <T>(
-  harness: HarnessName,
-  request: HarnessRequest<T>,
-) => Promise<T>;
+export type HarnessRunner = <T>(harness: HarnessName, request: HarnessRequest<T>) => Promise<T>;
 
 // What a run cost, as far as the harness will say. Every field is optional
 // because the three disagree: claude reports tokens and a dollar figure, codex
@@ -144,10 +141,7 @@ export interface HarnessAdapter {
     scratch: HarnessScratch,
     images?: EncodedImage[],
   ): HarnessInvocation;
-  extractPayload(
-    proc: CompletedProcess,
-    readResultFile: () => Promise<string>,
-  ): Promise<unknown>;
+  extractPayload(proc: CompletedProcess, readResultFile: () => Promise<string>): Promise<unknown>;
   // Tokens and cost, where the CLI surfaces them. Undefined when it does not.
   extractUsage?(proc: CompletedProcess): HarnessUsage | undefined;
   // The session this run belongs to. Absent on adapters whose CLI keeps none,

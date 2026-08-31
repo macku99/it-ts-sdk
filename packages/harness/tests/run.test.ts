@@ -19,14 +19,14 @@ function stubSpawner(
 
 describe("toHarnessJsonSchema", () => {
   it("drops the $schema meta-ref that Claude's validator rejects", () => {
-    const json = toHarnessJsonSchema(schema) as Record<string, unknown>;
+    const json = toHarnessJsonSchema(schema);
     expect(json.$schema).toBeUndefined();
     expect(json.type).toBe("object");
     expect(Object.keys(json.properties as object)).toEqual(["verdict", "score"]);
   });
 
   it("keeps the constraints the harness needs to honour", () => {
-    const json = toHarnessJsonSchema(schema) as Record<string, unknown>;
+    const json = toHarnessJsonSchema(schema);
     expect(json.required).toEqual(["verdict", "score"]);
   });
 });
@@ -68,9 +68,9 @@ describe("runHarness", () => {
       stderr: "Error: --json-schema is not a valid JSON Schema",
       code: 1,
     });
-    await expect(
-      runHarness("claude", { prompt: "go", schema }, { spawner }),
-    ).rejects.toThrow(/exit 1[\s\S]*not a valid JSON Schema/);
+    await expect(runHarness("claude", { prompt: "go", schema }, { spawner })).rejects.toThrow(
+      /exit 1[\s\S]*not a valid JSON Schema/,
+    );
   });
 
   it("writes the schema to disk for harnesses that read it from a file", async () => {

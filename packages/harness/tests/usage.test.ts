@@ -44,7 +44,7 @@ describe("claude usage", () => {
 
 describe("codex usage", () => {
   it("reads the token total out of its stdout banner", () => {
-    const usage = codexAdapter.extractUsage?.(proc("codex\n{\"v\":\"ok\"}\ntokens used\n24,317\n"));
+    const usage = codexAdapter.extractUsage?.(proc('codex\n{"v":"ok"}\ntokens used\n24,317\n'));
     expect(usage?.totalTokens).toBe(24317);
     // Codex reports no cost, and a made-up one would be worse than none.
     expect(usage?.costUsd).toBeUndefined();
@@ -68,11 +68,7 @@ describe("runHarness reports usage", () => {
     const seen: HarnessUsage[] = [];
     const spawner: Spawner = async () => proc(CLAUDE_ENVELOPE);
 
-    await runHarness(
-      "claude",
-      { prompt: "go", schema, onUsage: (u) => seen.push(u) },
-      { spawner },
-    );
+    await runHarness("claude", { prompt: "go", schema, onUsage: (u) => seen.push(u) }, { spawner });
 
     expect(seen).toHaveLength(1);
     expect(seen[0].costUsd).toBeCloseTo(0.3501765);
@@ -80,8 +76,7 @@ describe("runHarness reports usage", () => {
 
   it("stays quiet for a harness that reports nothing", async () => {
     const seen: HarnessUsage[] = [];
-    const spawner: Spawner = async () =>
-      proc(JSON.stringify({ structuredOutput: { v: "ok" } }));
+    const spawner: Spawner = async () => proc(JSON.stringify({ structuredOutput: { v: "ok" } }));
 
     await runHarness("grok", { prompt: "go", schema, onUsage: (u) => seen.push(u) }, { spawner });
     expect(seen).toEqual([]);
@@ -91,13 +86,13 @@ describe("runHarness reports usage", () => {
 // Codex rejects a schema without this, with a 400 naming response_format.
 describe("schemas stay acceptable to codex", () => {
   it("closes every object it generates", () => {
-    const json = toHarnessJsonSchema(z.object({ a: z.string() })) as Record<string, unknown>;
+    const json = toHarnessJsonSchema(z.object({ a: z.string() }));
     expect(json.additionalProperties).toBe(false);
   });
 
   it("keeps it closed through .extend, which the classify schema uses", () => {
     const extended = z.object({ a: z.string() }).extend({ b: z.array(z.enum(["x", "y"])) });
-    const json = toHarnessJsonSchema(extended) as Record<string, unknown>;
+    const json = toHarnessJsonSchema(extended);
     expect(json.additionalProperties).toBe(false);
   });
 });

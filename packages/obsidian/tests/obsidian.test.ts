@@ -31,9 +31,9 @@ describe("obsidianConfigPath", () => {
   });
 
   it("honors XDG_CONFIG_HOME", () => {
-    expect(
-      obsidianConfigPath("linux", { XDG_CONFIG_HOME: "/home/m/cfg" }, "/home/m"),
-    ).toBe("/home/m/cfg/obsidian/obsidian.json");
+    expect(obsidianConfigPath("linux", { XDG_CONFIG_HOME: "/home/m/cfg" }, "/home/m")).toBe(
+      "/home/m/cfg/obsidian/obsidian.json",
+    );
   });
 
   it("expands a tilde in XDG_CONFIG_HOME", () => {
@@ -46,9 +46,9 @@ describe("obsidianConfigPath", () => {
   // tilde against the real homedir instead would make every assertion here pass
   // on the author's machine and describe nothing.
   it("expands that tilde against the home it was given, not the machine's", () => {
-    expect(
-      obsidianConfigPath("linux", { XDG_CONFIG_HOME: "~/cfg" }, "/home/m"),
-    ).toBe("/home/m/cfg/obsidian/obsidian.json");
+    expect(obsidianConfigPath("linux", { XDG_CONFIG_HOME: "~/cfg" }, "/home/m")).toBe(
+      "/home/m/cfg/obsidian/obsidian.json",
+    );
   });
 
   it("ignores a blank XDG_CONFIG_HOME rather than resolving beside the cwd", () => {
@@ -207,10 +207,7 @@ describe("findNoteBySourceUrl", () => {
       `---\ntitle: Test\nsource: https://youtube.com/watch?v=abc123\n---\n\n# Content`,
     );
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtube.com/watch?v=abc123",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtube.com/watch?v=abc123");
     expect(result).toBe(notePath);
   });
 
@@ -223,10 +220,7 @@ describe("findNoteBySourceUrl", () => {
       `---\ntitle: Test\nsource: "https://youtu.be/xyz789"\n---\n\nContent`,
     );
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtu.be/xyz789",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/xyz789");
     expect(result).toBe(notePath);
   });
 
@@ -238,10 +232,7 @@ describe("findNoteBySourceUrl", () => {
       `---\ntitle: Other\nsource: https://youtube.com/watch?v=different\n---\n\nContent`,
     );
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtube.com/watch?v=abc123",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtube.com/watch?v=abc123");
     expect(result).toBeUndefined();
   });
 
@@ -257,15 +248,9 @@ describe("findNoteBySourceUrl", () => {
     const nestedDir = join(vaultDir, "subchannel", "deep");
     await mkdir(nestedDir, { recursive: true });
     const notePath = join(nestedDir, "deep-note.md");
-    await writeFile(
-      notePath,
-      `---\nsource: https://youtu.be/nested\n---\n\nDeep content`,
-    );
+    await writeFile(notePath, `---\nsource: https://youtu.be/nested\n---\n\nDeep content`);
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtu.be/nested",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/nested");
     expect(result).toBe(notePath);
   });
 
@@ -275,10 +260,7 @@ describe("findNoteBySourceUrl", () => {
       `{"source": "https://youtube.com/watch?v=abc123"}`,
     );
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtube.com/watch?v=abc123",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtube.com/watch?v=abc123");
     expect(result).toBeUndefined();
   });
 
@@ -288,10 +270,7 @@ describe("findNoteBySourceUrl", () => {
       `# Just a note\n\nsource: https://youtube.com/watch?v=abc123`,
     );
 
-    const result = await findNoteBySourceUrl(
-      vaultDir,
-      "https://youtube.com/watch?v=abc123",
-    );
+    const result = await findNoteBySourceUrl(vaultDir, "https://youtube.com/watch?v=abc123");
     expect(result).toBeUndefined();
   });
 
@@ -322,10 +301,7 @@ describe("findNoteBySourceUrl", () => {
   it("skips .obsidian/ directory", async () => {
     const obsDir = join(vaultDir, ".obsidian");
     await mkdir(obsDir, { recursive: true });
-    await writeFile(
-      join(obsDir, "config.md"),
-      `---\nsource: https://youtu.be/obs\n---`,
-    );
+    await writeFile(join(obsDir, "config.md"), `---\nsource: https://youtu.be/obs\n---`);
 
     const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/obs");
     expect(result).toBeUndefined();
@@ -334,10 +310,7 @@ describe("findNoteBySourceUrl", () => {
   it("skips .trash/ directory", async () => {
     const trashDir = join(vaultDir, ".trash");
     await mkdir(trashDir, { recursive: true });
-    await writeFile(
-      join(trashDir, "old.md"),
-      `---\nsource: https://youtu.be/trash\n---`,
-    );
+    await writeFile(join(trashDir, "old.md"), `---\nsource: https://youtu.be/trash\n---`);
 
     const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/trash");
     expect(result).toBeUndefined();
@@ -346,10 +319,7 @@ describe("findNoteBySourceUrl", () => {
   it("skips files named _index.md at any depth", async () => {
     const channelDir = join(vaultDir, "ChannelName");
     await mkdir(channelDir, { recursive: true });
-    await writeFile(
-      join(channelDir, "_index.md"),
-      `---\nsource: https://youtu.be/index\n---`,
-    );
+    await writeFile(join(channelDir, "_index.md"), `---\nsource: https://youtu.be/index\n---`);
 
     const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/index");
     expect(result).toBeUndefined();
@@ -358,18 +328,12 @@ describe("findNoteBySourceUrl", () => {
   it("still finds notes in deeply nested channel folders alongside excluded dirs", async () => {
     const mocDir = join(vaultDir, "_moc");
     await mkdir(mocDir, { recursive: true });
-    await writeFile(
-      join(mocDir, "irrelevant.md"),
-      `---\nsource: https://youtu.be/wrong\n---`,
-    );
+    await writeFile(join(mocDir, "irrelevant.md"), `---\nsource: https://youtu.be/wrong\n---`);
 
     const channelDir = join(vaultDir, "Real Channel");
     await mkdir(channelDir, { recursive: true });
     const notePath = join(channelDir, "2026-05-03-real.md");
-    await writeFile(
-      notePath,
-      `---\nsource: https://youtu.be/real\n---\n\nContent`,
-    );
+    await writeFile(notePath, `---\nsource: https://youtu.be/real\n---\n\nContent`);
 
     const result = await findNoteBySourceUrl(vaultDir, "https://youtu.be/real");
     expect(result).toBe(notePath);
@@ -446,8 +410,6 @@ describe("sanitizeChannelName", () => {
   });
 
   it("handles complex combination of replacements", () => {
-    expect(sanitizeChannelName('  ...Tech / "News" | Update...  ')).toBe(
-      'Tech - -News- - Update',
-    );
+    expect(sanitizeChannelName('  ...Tech / "News" | Update...  ')).toBe("Tech - -News- - Update");
   });
 });

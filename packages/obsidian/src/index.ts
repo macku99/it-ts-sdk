@@ -30,10 +30,11 @@ export function obsidianConfigPath(
  * other location turns "no such file" into something actionable.
  */
 export function missingRegistryMessage(path: string, platform: string = process.platform): string {
-  const flatpak = platform === "darwin"
-    ? ""
-    : " A Flatpak install keeps it at" +
-      " ~/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json instead.";
+  const flatpak =
+    platform === "darwin"
+      ? ""
+      : " A Flatpak install keeps it at"
+        + " ~/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json instead.";
   return `No Obsidian vault registry at ${path} — is Obsidian installed here?${flatpak}`;
 }
 
@@ -143,10 +144,7 @@ export async function findNoteBySourceUrl(
 const EXCLUDED_DIRS = new Set([".obsidian", ".trash", "_moc", "_daily"]);
 const EXCLUDED_FILES = new Set(["_index.md"]);
 
-async function searchDirForSourceUrl(
-  dir: string,
-  sourceUrl: string,
-): Promise<string | undefined> {
+async function searchDirForSourceUrl(dir: string, sourceUrl: string): Promise<string | undefined> {
   let entries;
   try {
     entries = await readdir(dir, { withFileTypes: true });
@@ -168,9 +166,11 @@ async function searchDirForSourceUrl(
       const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
       if (frontmatterMatch) {
         const frontmatter = frontmatterMatch[1];
-        if (frontmatter.includes(`source: ${sourceUrl}`) ||
-            frontmatter.includes(`source: "${sourceUrl}"`) ||
-            frontmatter.includes(`source: '${sourceUrl}'`)) {
+        if (
+          frontmatter.includes(`source: ${sourceUrl}`)
+          || frontmatter.includes(`source: "${sourceUrl}"`)
+          || frontmatter.includes(`source: '${sourceUrl}'`)
+        ) {
           return fullPath;
         }
       }

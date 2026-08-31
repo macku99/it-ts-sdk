@@ -76,7 +76,11 @@ describe("runHarness retry", () => {
     const slept: number[] = [];
 
     await expect(
-      runHarness("grok", { prompt: "go", schema }, { spawner, sleep: async (ms) => void slept.push(ms) }),
+      runHarness(
+        "grok",
+        { prompt: "go", schema },
+        { spawner, sleep: async (ms) => void slept.push(ms) },
+      ),
     ).rejects.toThrow(/overloaded/);
 
     expect(attempts()).toBe(3);
@@ -90,7 +94,11 @@ describe("runHarness retry", () => {
     const slept: number[] = [];
 
     await expect(
-      runHarness("grok", { prompt: "go", schema }, { spawner, sleep: async (ms) => void slept.push(ms) }),
+      runHarness(
+        "grok",
+        { prompt: "go", schema },
+        { spawner, sleep: async (ms) => void slept.push(ms) },
+      ),
     ).rejects.toThrow(/unknown option/);
 
     expect(attempts()).toBe(1);

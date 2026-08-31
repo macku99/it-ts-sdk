@@ -30,7 +30,9 @@ describe("withNodeMiddleware", () => {
     const node = withNodeMiddleware<ProbeState>("classify", async () => ({
       trace: ["matched=true → systems"],
     }));
-    expect(firstTraceLine(await node(emptyState))).toMatch(/^classify \(\d+\.\ds\): matched=true → systems$/);
+    expect(firstTraceLine(await node(emptyState))).toMatch(
+      /^classify \(\d+\.\ds\): matched=true → systems$/,
+    );
   });
 
   // Recorded rather than thrown, so the graph can still reach its reporting
@@ -74,9 +76,7 @@ describe("required", () => {
   });
 
   it("explains which node is missing which input", () => {
-    expect(() => required({ a: undefined }, "a", "classify")).toThrow(
-      /classify.*\ba\b/,
-    );
+    expect(() => required({ a: undefined }, "a", "classify")).toThrow(/classify.*\ba\b/);
   });
 });
 
@@ -126,9 +126,13 @@ describe("worm-agnostic", () => {
 describe("progress reaches the log as it happens", () => {
   it("reports a node the moment it completes, not at the end of the run", async () => {
     const lines: string[] = [];
-    const node = withNodeMiddleware("fetch", async () => ({ trace: ['"A Talk" 34:10, 40 frames'] }), {
-      log: (line) => lines.push(line),
-    });
+    const node = withNodeMiddleware(
+      "fetch",
+      async () => ({ trace: ['"A Talk" 34:10, 40 frames'] }),
+      {
+        log: (line) => lines.push(line),
+      },
+    );
 
     await node({ trace: [] });
 
@@ -139,9 +143,13 @@ describe("progress reaches the log as it happens", () => {
 
   it("reports a failure the same way, rather than only recording it", async () => {
     const lines: string[] = [];
-    const node = withNodeMiddleware("classify", async () => {
-      throw new Error("harness timed out");
-    }, { log: (line) => lines.push(line) });
+    const node = withNodeMiddleware(
+      "classify",
+      async () => {
+        throw new Error("harness timed out");
+      },
+      { log: (line) => lines.push(line) },
+    );
 
     await node({ trace: [] });
 

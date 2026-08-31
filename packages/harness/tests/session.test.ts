@@ -7,7 +7,10 @@ import { grokAdapter } from "../src/grok.js";
 import { runHarness, type Spawner } from "../src/run.js";
 import type { CompletedProcess, HarnessRequest, HarnessScratch } from "../src/types.js";
 
-const scratch: HarnessScratch = { schemaPath: "/tmp/w/schema.json", resultPath: "/tmp/w/result.json" };
+const scratch: HarnessScratch = {
+  schemaPath: "/tmp/w/schema.json",
+  resultPath: "/tmp/w/result.json",
+};
 const schema = z.object({ verdict: z.string() });
 const schemaJson = '{"type":"object"}';
 
@@ -30,8 +33,9 @@ const envelope = (session: string) =>
 
 describe("claude session capture", () => {
   it("reads the session id off the result envelope", () => {
-    expect(claudeAdapter.extractSession?.(proc({ stdout: envelope("b2ea56d9-765c") })))
-      .toBe("b2ea56d9-765c");
+    expect(claudeAdapter.extractSession?.(proc({ stdout: envelope("b2ea56d9-765c") }))).toBe(
+      "b2ea56d9-765c",
+    );
   });
 
   it("reads it off the last event of a stream, not the init line", () => {

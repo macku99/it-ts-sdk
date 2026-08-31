@@ -45,9 +45,9 @@ describe("spawnHarness", () => {
     ].join("\n");
 
     const started = Date.now();
-    await expect(
-      spawnHarness(node, ["-e", script], { timeoutMs: 500 }),
-    ).rejects.toThrow(/exceeded 500ms/);
+    await expect(spawnHarness(node, ["-e", script], { timeoutMs: 500 })).rejects.toThrow(
+      /exceeded 500ms/,
+    );
     expect(Date.now() - started).toBeLessThan(8000);
   }, 20_000);
 
@@ -60,9 +60,9 @@ describe("spawnHarness", () => {
       "setTimeout(() => {}, 60000);",
     ].join("");
 
-    await expect(
-      spawnHarness(node, ["-e", script], { timeoutMs: 500 }),
-    ).rejects.toThrow(/exceeded/);
+    await expect(spawnHarness(node, ["-e", script], { timeoutMs: 500 })).rejects.toThrow(
+      /exceeded/,
+    );
 
     const { execFileSync } = await import("node:child_process");
     const survivors = execFileSync("/bin/ps", ["-ax", "-o", "command"], { encoding: "utf8" })
