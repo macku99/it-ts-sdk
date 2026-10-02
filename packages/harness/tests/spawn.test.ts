@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { spawnHarness } from "../src/run.js";
+import { killHarnesses, spawnHarness } from "../src/run.js";
 
 // Everything here spawns node itself, never a real harness CLI, so the suite
 // stays hermetic while still exercising the actual process plumbing.
@@ -70,4 +70,22 @@ describe("spawnHarness", () => {
       .filter((line) => line.includes(marker) && !line.includes("/bin/ps"));
     expect(survivors).toEqual([]);
   }, 20_000);
+});
+
+// Another module's SIGTERM handler may call process.exit before this package's
+// runs — tubeworm's does, for yt-dlp — and a signal listener that never runs
+// kills nothing. The exit listener runs however the process ends.
+describe("harness children on exit", () => {
+  it("are killed by an exit listener, not only by this package's signal handlers", async () => {
+    const pending = spawnHarness(node, ["-e", "setTimeout(() => {}, 60000)"], {
+      timeoutMs: 30_000,
+    }).catch(() => undefined);
+
+    expect(process.listeners("exit")).toContain(killHarnesses);
+
+    const started = Date.now();
+    killHarnesses();
+    await pending;
+    expect(Date.now() - started).toBeLessThan(5000);
+  }, 15_000);
 });

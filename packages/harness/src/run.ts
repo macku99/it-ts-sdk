@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { harnessEnv } from "./env.js";
 import { getAdapter } from "./index.js";
 import { toHarnessJsonSchema } from "./schema.js";
 import type {
@@ -64,14 +65,20 @@ const DRAIN_MS = 500;
 const liveKills = new Set<() => void>();
 let signalsHooked = false;
 
+/** Kills every harness still running, and everything each one started. */
+export function killHarnesses(): void {
+  for (const kill of liveKills) kill();
+}
+
+// The kill runs on exit rather than inside the signal handlers below: another
+// module may hook the same signals and exit first, and then these never run.
+// An exit listener runs however the process ends, and a kill is synchronous.
 function hookSignals(): void {
   if (signalsHooked) return;
   signalsHooked = true;
+  process.on("exit", killHarnesses);
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
-    process.on(signal, () => {
-      for (const kill of liveKills) kill();
-      process.exit(signal === "SIGINT" ? 130 : 143);
-    });
+    process.on(signal, () => process.exit(signal === "SIGINT" ? 130 : 143));
   }
 }
 
@@ -82,10 +89,16 @@ export const spawnHarness: Spawner = (bin, args, opts) =>
     // leaves those holding the stdout pipe.
     // Spelled as two literal tuples rather than one computed array so the
     // typings still promise stdout and stderr are readable streams.
+    const env = harnessEnv(process.env);
     const child =
       opts.stdin === undefined
-        ? spawn(bin, args, { cwd: opts.cwd, stdio: ["ignore", "pipe", "pipe"], detached: true })
-        : spawn(bin, args, { cwd: opts.cwd, stdio: ["pipe", "pipe", "pipe"], detached: true });
+        ? spawn(bin, args, {
+            cwd: opts.cwd,
+            env,
+            stdio: ["ignore", "pipe", "pipe"],
+            detached: true,
+          })
+        : spawn(bin, args, { cwd: opts.cwd, env, stdio: ["pipe", "pipe", "pipe"], detached: true });
 
     if (opts.stdin !== undefined) {
       // These CLIs wait for EOF before starting, so the pipe must be closed and
