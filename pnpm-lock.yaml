@@ -27,7 +27,11 @@ importers:
         specifier: ^3.1.0
         version: 3.2.7(@types/node@22.20.1)
 
-  packages/graph: {}
+  packages/graph:
+    devDependencies:
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
   packages/harness:
     dependencies:
@@ -38,8 +42,15 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
-  packages/obsidian: {}
+  packages/obsidian:
+    devDependencies:
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
 packages:
 
