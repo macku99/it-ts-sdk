@@ -1,6 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+# A pull request is checked once, as a pull request; main is checked again
+# after each merge. A push trigger on every branch would run both for a branch
+# with an open pull request.
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   check:
